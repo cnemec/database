@@ -1,0 +1,72 @@
+CREATE TABLE Brand(
+brand varchar(20)
+);
+CREATE TABLE Model(
+brand varchar(20),
+modeltype varchar(20),
+bodytype varchar(20),
+PRIMARY KEY (modeltype,bodytype),
+FOREIGN KEY (brand) references Brand(brand)
+);
+CREATE TABLE supplier(
+parts varchar(20),
+nmodel varchar(20),
+PRIMARY KEY (nmodel, parts),
+FOREIGN KEY (nmodel) references Model(modeltype)
+);
+CREATE TABLE CompanyPlant(
+assembled integer,
+parts varchar(20),
+nmodel varchar(20),
+PRIMARY KEY (nmodel, parts, assembled),
+FOREIGN KEY (nmodel) references Model(modeltype)
+);
+CREATE TABLE Options(
+color varchar(20),
+transmission varchar(20),
+engine varchar(20),
+brand varchar(20),
+modeltype varchar(20),
+bodytype varchar(20),
+PRIMARY KEY (modeltype,bodytype,engine,transmission,color),
+FOREIGN KEY(modeltype) References Model(modeltype),
+FOREIGN KEY(bodytype) References Model(bodytype),
+FOREIGN KEY(brand) References Brand(brand)
+);
+CREATE TABLE Vehicle(
+VID char(6),
+color varchar(20),
+transmission varchar(20),
+engine varchar(20),
+brand varchar(20),
+modeltype varchar(20),
+bodytype varchar(20),
+sold integer,
+DateOfSale Date,
+PRIMARY KEY(VID),
+FOREIGN KEY(modeltype) References Model(modeltype),
+FOREIGN KEY(bodytype) References Model(bodytype),
+FOREIGN KEY(brand) References Brand(brand),
+FOREIGN KEY(color) References Options(color),
+FOREIGN KEY(transmission) References Options(transmission),
+FOREIGN KEY(engine) References Options(engine)
+);
+CREATE TABLE Dealers(
+name varchar(20),
+maxunits integer,
+current integer,
+PRIMARY KEY(name)
+
+);
+CREATE TABLE Customers(
+income integer,
+brought character(6),
+dealer varchar(20),
+namec varchar(20),
+address varchar(20),
+phonenumber character(11),
+gender character(1),
+PRIMARY KEY(namec, address),
+FOREIGN KEY(dealer) references dealers(name),
+FOREIGN KEY(brought) references vehicle(VID)
+);
