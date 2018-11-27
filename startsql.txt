@@ -42,6 +42,7 @@ brand varchar(20),
 modeltype varchar(20),
 bodytype varchar(20),
 sold integer,
+cost integer,
 DateOfSale Date,
 PRIMARY KEY(VID),
 FOREIGN KEY(modeltype) References Model(modeltype),
@@ -56,17 +57,44 @@ name varchar(20),
 maxunits integer,
 current integer,
 PRIMARY KEY(name)
-
 );
 CREATE TABLE Customers(
 income integer,
 brought character(6),
+spent integer,
 dealer varchar(20),
-namec varchar(20),
+namec varchar(20) NOT NULL,
 address varchar(20),
 phonenumber character(11),
 gender character(1),
 PRIMARY KEY(namec, address),
 FOREIGN KEY(dealer) references dealers(name),
-FOREIGN KEY(brought) references vehicle(VID)
+CONSTRAINT CHK_Gender CHECK (gender ='f' OR gender = 'm'),
+FOREIGN KEY(brought) references vehicle(VID),
+FOREIGN KEY(spent) references vehicle(cost)
 );
+
+CREATE VIEW carsBought AS
+SELECT VID,
+FROM vehicle,
+WHERE sold = 1;
+
+CREATE VIEW femaleDriver AS
+SELECT namec,
+FROM Customers,
+WHERE gender = 'f';
+
+CREATE VIEW maleDrive AS
+SELECT namec,
+FROM Customer,
+WHERE gender = 'm';
+
+CREATE VIEW highroller AS
+SELECT namec, income
+FROM Customers,
+WHERE cost > 50,000;
+
+CREATE VIEW openDealers AS
+SELECT name, maxunits, current
+FROM Dealers
+WHERE current < maxunits;
