@@ -84,7 +84,7 @@ SELECT namec,
 FROM Customers,
 WHERE gender = 'f';
 
-CREATE VIEW maleDrive AS
+CREATE VIEW maleDriver AS
 SELECT namec,
 FROM Customer,
 WHERE gender = 'm';
