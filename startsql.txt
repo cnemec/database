@@ -56,7 +56,8 @@ CREATE TABLE Dealers(
 name varchar(20),
 maxunits integer,
 current integer,
-PRIMARY KEY(name)
+PRIMARY KEY(name),
+CONSTRAINT CHK_numbers CHECK (maxunits>=current)
 );
 CREATE TABLE Customers(
 income integer,
