@@ -93,3 +93,9 @@ CREATE VIEW openDealers AS
 SELECT name, maxunits, current
 FROM Dealers
 WHERE current < maxunits;
+
+CREATE VIEW multipleVehicleOwner
+SELECT cname, address, count(cname) as numVehicles
+from Vehicle
+where numVehicles > 1
+group by cname
