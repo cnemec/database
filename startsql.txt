@@ -25,32 +25,32 @@ CREATE TABLE Options(
 color varchar(20),
 transmission varchar(20),
 engine varchar(20),
-brand varchar(20),
-modeltype varchar(20),
-bodytype varchar(20),
-PRIMARY KEY (modeltype,bodytype,engine,transmission,color),
-FOREIGN KEY(modeltype) References Model(modeltype),
-FOREIGN KEY(bodytype) References Model(bodytype),
-FOREIGN KEY(brand) References Brand(brand)
+PRIMARY KEY (engine,transmission,color)
 );
 CREATE TABLE Vehicle(
 VID char(6),
 color varchar(20),
 transmission varchar(20),
 engine varchar(20),
-brand varchar(20),
 modeltype varchar(20),
 bodytype varchar(20),
 sold integer,
 cost integer,
+dealer varchar(20),
 DateOfSale Date,
+cname VARCHAR(20),
+address VARCHAR(20),
+phonen character(11),
 PRIMARY KEY(VID),
 FOREIGN KEY(modeltype) References Model(modeltype),
 FOREIGN KEY(bodytype) References Model(bodytype),
-FOREIGN KEY(brand) References Brand(brand),
 FOREIGN KEY(color) References Options(color),
 FOREIGN KEY(transmission) References Options(transmission),
-FOREIGN KEY(engine) References Options(engine)
+FOREIGN KEY(engine) References Options(engine),
+FOREIGN KEY(dealer) References Dealers(name)
+FOREIGN KEY(cname) References Customers(namec),
+FOREIGN KEY(address) References Customers(address),
+FOREIGN KEY(phonen) References Customers(phonenumber)
 );
 CREATE TABLE Dealers(
 name varchar(20),
@@ -60,18 +60,14 @@ PRIMARY KEY(name)
 );
 CREATE TABLE Customers(
 income integer,
-brought character(6),
-spent integer,
 dealer varchar(20),
 namec varchar(20) NOT NULL,
 address varchar(20),
 phonenumber character(11),
 gender character(1),
-PRIMARY KEY(namec, address),
-FOREIGN KEY(dealer) references dealers(name),
+PRIMARY KEY(namec, address, phonenumber),
 CONSTRAINT CHK_Gender CHECK (gender ='f' OR gender = 'm'),
-FOREIGN KEY(brought) references vehicle(VID),
-FOREIGN KEY(spent) references vehicle(cost)
+FOREIGN KEY(dealer) references dealers(name)
 );
 
 CREATE VIEW carsBought AS
@@ -84,14 +80,14 @@ SELECT namec,
 FROM Customers,
 WHERE gender = 'f';
 
-CREATE VIEW maleDriver AS
+CREATE VIEW maleDrive AS
 SELECT namec,
 FROM Customer,
 WHERE gender = 'm';
 
 CREATE VIEW highroller AS
 SELECT namec, income
-FROM Customers,
+FROM Customers NATURAL JOIN Vehicle,
 WHERE cost > 50,000;
 
 CREATE VIEW openDealers AS
