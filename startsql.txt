@@ -1,12 +1,12 @@
 CREATE TABLE Brand(
-brand varchar(20)
+brandname varchar(20)
 );
 CREATE TABLE Model(
-brand varchar(20),
+brandname varchar(20),
 modeltype varchar(20),
 bodytype varchar(20),
 PRIMARY KEY (modeltype,bodytype),
-FOREIGN KEY (brand) references Brand(brand)
+FOREIGN KEY (brandname) references Brand(brandname)
 );
 CREATE TABLE supplier(
 parts varchar(20),
@@ -47,7 +47,7 @@ FOREIGN KEY(color) References Options(color),
 FOREIGN KEY(transmission) References Options(transmission),
 FOREIGN KEY(engine) References Options(engine),
 FOREIGN KEY(dealer) References Dealers(name)
-FOREIGN KEY(cname) References Customers(namec),
+FOREIGN KEY(cname) References Customers(cname),
 FOREIGN KEY(address) References Customers(address),
 );
 CREATE TABLE Dealers(
@@ -60,11 +60,11 @@ CONSTRAINT CHK_numbers CHECK (maxunits>=current)
 CREATE TABLE Customers(
 income integer,
 dealer varchar(20),
-namec varchar(20) NOT NULL,
+cname varchar(20) NOT NULL,
 address varchar(20),
 phonenumber character(11),
 gender character(1),
-PRIMARY KEY(namec, address),
+PRIMARY KEY(cname, address),
 CONSTRAINT CHK_Gender CHECK (gender ='f' OR gender = 'm'),
 FOREIGN KEY(dealer) references dealers(name)
 );
@@ -75,18 +75,18 @@ FROM vehicle,
 WHERE sold = 1;
 
 CREATE VIEW femaleDriver AS
-SELECT namec,
+SELECT cname,
 FROM Customers,
 WHERE gender = 'f';
 
 CREATE VIEW maleDrive AS
-SELECT namec,
+SELECT cname,
 FROM Customer,
 WHERE gender = 'm';
 
 CREATE VIEW highroller AS
-SELECT namec, income
-FROM Customers NATURAL JOIN Vehicle,
+SELECT cname, address, income, brandname, modeltype, cost
+FROM Customers NATURAL JOIN Vehicle NATURAL JOIN Model,
 WHERE cost > 50,000;
 
 CREATE VIEW openDealers AS
