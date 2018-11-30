@@ -10,16 +10,16 @@ FOREIGN KEY (brandname) references Brand(brandname)
 );
 CREATE TABLE supplier(
 parts varchar(20),
-nmodel varchar(20),
-PRIMARY KEY (nmodel, parts),
-FOREIGN KEY (nmodel) references Model(modeltype)
+modeltype varchar(20),
+PRIMARY KEY (modeltype, parts),
+FOREIGN KEY (modeltype) references Model(modeltype)
 );
 CREATE TABLE CompanyPlant(
 assembled integer,
 parts varchar(20),
-nmodel varchar(20),
-PRIMARY KEY (nmodel, parts, assembled),
-FOREIGN KEY (nmodel) references Model(modeltype)
+modeltype varchar(20),
+PRIMARY KEY (modeltype, parts, assembled),
+FOREIGN KEY (modeltype) references Model(modeltype)
 );
 CREATE TABLE Options(
 color varchar(20),
@@ -36,7 +36,7 @@ modeltype varchar(20),
 bodytype varchar(20),
 sold integer,
 cost integer,
-dealer varchar(20),
+dname varchar(20),
 DateOfSale Date,
 cname VARCHAR(20),
 address VARCHAR(20),
@@ -46,27 +46,27 @@ FOREIGN KEY(bodytype) References Model(bodytype),
 FOREIGN KEY(color) References Options(color),
 FOREIGN KEY(transmission) References Options(transmission),
 FOREIGN KEY(engine) References Options(engine),
-FOREIGN KEY(dealer) References Dealers(name)
+FOREIGN KEY(dname) References Dealers(dname)
 FOREIGN KEY(cname) References Customers(cname),
 FOREIGN KEY(address) References Customers(address),
 );
 CREATE TABLE Dealers(
-name varchar(20),
+dname varchar(20),
 maxunits integer,
 current integer,
-PRIMARY KEY(name),
+PRIMARY KEY(dname),
 CONSTRAINT CHK_numbers CHECK (maxunits>=current)
 );
 CREATE TABLE Customers(
 income integer,
-dealer varchar(20),
+dname varchar(20),
 cname varchar(20) NOT NULL,
 address varchar(20),
 phonenumber character(11),
 gender character(1),
 PRIMARY KEY(cname, address),
 CONSTRAINT CHK_Gender CHECK (gender ='f' OR gender = 'm'),
-FOREIGN KEY(dealer) references dealers(name)
+FOREIGN KEY(dname references Dealers(dname)
 );
 
 CREATE VIEW carsBought AS
