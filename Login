@@ -1,0 +1,63 @@
+package employer;
+import java.sql.*;
+
+public class Login {
+	private String userid;
+	private String passwd;
+	private String _userid;
+	private String _passwd;
+	
+	Connection conn = null;
+	Statement stmt = null;
+	String sql = null;
+	ResultSet rs;
+	String jdbc_driver = "oracle.jdbc.driver.OracleDriver";
+	String jdbc_url = "jdbc:oracle:thin:@fourier.cs.iit.edu:1521:orcl\", \"slim21\", \"YCsBUo3...uK3Z2o1817";
+
+
+public void getData() {
+	try {
+		Class.forName(jdbc_driver);
+		conn = DriverManager.getConnection(jdbc_url,"root","sa");
+		stmt = conn.createStatement();
+		sql = "select userid, password from test_member where userid='" + userid +"'";
+		rs = stmt.executeQuery(sql);
+		
+		while(rs.next())
+		{
+			_userid = rs.getString("useid");
+			_passwd = rs.getString("passwd");
+			
+		}
+		
+		rs.close();
+		stmt.close();
+		conn.close();
+		
+	} catch(Exception e) {System.out.print(e);}
+}
+
+
+public boolean checkUser()
+{
+	getData();
+	if(userid.equals(_userid)&&passwd.equals(_passwd))return true;
+	else return false;
+}
+
+public void setUserid(String userid)
+{
+	this.userid = userid;
+}
+public void setPasswd(String passwd)
+{
+	this.passwd = passwd;
+}
+public String getUserid()
+{
+	return userid;
+}
+public String getPasswd() {
+	return passwd;
+}
+}
