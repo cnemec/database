@@ -1,0 +1,290 @@
+import java.sql.*;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        try (
+                // Step 1: Allocate a database 'Connection' object
+                Connection conn = DriverManager.getConnection(
+                        "jdbc:mysql://localhost:3306/ebookshop?useSSL=false", "myuser", "xxxx");
+                // MySQL: "jdbc:mysql://hostname:port/databaseName", "username", "password"
+
+                // Step 2: Allocate a 'Statement' object in the Connection
+                /*
+                Vehicles
+                    Vin
+                    Brands
+                    Models
+                    Color
+                Dealers
+                    Max num vehicles
+                    Current num vehicles
+                    What Vehicles are there
+                Customers
+                    Name
+                    Address
+                    Phone
+                    Gender
+                    Income
+                    ID
+                    history
+                        vehicles
+                            Vins?
+                    employee?
+                        dealer
+                 */
+
+
+        ) {
+            user(conn);
+
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+        }
+        // Step 5: Close the resources - Done automatically by try-with-resources
+    }
+
+    public enum type{
+        CUSTOMER,
+        CAR,
+        DEALER
+    }
+
+    public static void user(Connection conn){
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Please enter your email: ");
+        String email = sc.nextLine();
+        String id = "";
+        String read = "select ID from customers where email = " + email;
+        if (find(conn, read)){
+            id = select(conn, read, type.CUSTOMER).trim();
+        }
+        else{
+            int count = 1000;
+            while(find(conn, "select ID from customers where id = " + new Integer(count).toString())){
+                count++;
+            }
+            id = new Integer(count).toString();
+            System.out.println("Please enter your name: ");
+            String name = sc.next();
+            System.out.println("Please enter your address: ");
+            String address = sc.next();
+            System.out.println("Please enter your phone number: ");
+            String phone = sc.next();
+            System.out.println("Please enter your gender: ");
+            String gender = sc.next();
+            System.out.println("Please enter your annual income: ");
+            String income = sc.next();
+            System.out.println("Are you an employee(true or false): ");
+            String employee = sc.next();
+            read = "('" + name + "', '" + address +"', " + phone + ", '" + gender + "', " +
+                    income + ", " + id + ", 0, '" + employee + "')";
+            insert(conn, read, type.CUSTOMER);
+        }
+        boolean reviewAccount = true;
+        while(reviewAccount){
+            String info = select(conn, "select * from customers where email = " + email, type.CUSTOMER);
+            String[] infoList = info.split(" ");
+            System.out.println("Name: " + infoList[0]);
+            System.out.println("Address: " + infoList[1]);
+            System.out.println("Phone Number: " + infoList[2]);
+            System.out.println("Gender: " + infoList[3]);
+            System.out.println("Annual Income: " + infoList[4]);
+            System.out.println("ID: " + infoList[5]);
+            System.out.println("Purchase History: " + infoList[6]);
+            System.out.println("Employee?: " + infoList[7]);
+            System.out.println();
+            System.out.println("Would you like to change any info? (yes or no)");
+            String yesno = sc.next();
+            if(yesno.equals("no")){
+                reviewAccount = false;
+            }
+            else{
+                System.out.println("What would you like to change? (name, address, phone, gender, " +
+                        "income, id, history, employee)");
+                String change = sc.next();
+                System.out.println("What would tou like to change it with?");
+                String changeWith = sc.next();
+                update(conn, change, changeWith, type.CUSTOMER, email);
+                }
+            System.out.println("Would you like to delete your account? (yes or no)");
+            yesno = sc.next();
+            if(yesno.equals("no")){
+                delete(conn, type.CUSTOMER, email);
+            }
+
+
+        }
+    }
+
+    public static String select(Connection conn, String select, type type) {
+        String ret = "";
+        try (Statement stmt = conn.createStatement();) {
+            ResultSet rset = stmt.executeQuery(select);
+
+            int id = 0;
+            String name = "";
+            String address = "";
+            int phone = 0;
+            String gender = "";
+            double income = 0;
+            String employee = "";
+            while (rset.next()) {   // Move the cursor to the next row, return false if no more row
+                switch (type) {
+                    case CUSTOMER:
+                        String[] parts = select.split(" ");
+                        if(search(parts, "ID")){
+                            id = rset.getInt("ID");
+                        }
+                        if(search(parts, "name")){
+                            name = rset.getString("name");
+                        }
+                        if(search(parts, "address")){
+                            address = rset.getString("address");
+                        }
+                        if(search(parts, "phone")){
+                            phone = rset.getInt("phone");
+                        }
+                        if(search(parts, "gender")){
+                            gender = rset.getString("gender");
+                        }
+                        if(search(parts, "income")){
+                            income = rset.getDouble("income");
+                        }
+                        if(search(parts, "employee")){
+                            employee = rset.getString("employee");
+                        }
+                        //also add history, don't know how
+
+                        String idString = "";
+                        String phoneString = "";
+                        String incomeString = "";
+
+                        if(id != 0){
+                            idString = new Integer(id).toString();
+                        }
+                        if(phone != 0){
+                            phoneString = new Integer(콜).toString();
+                        }
+                        if(income != 0){
+                            incomeString = new Double(income).toString();
+                        }
+
+                        ret =  name + " " + address + " " + phoneString + " " + gender + " " +
+                                incomeString + "" + idString + "" + employee;
+                        break;
+
+                    case CAR:
+                        break;
+
+                    case DEALER:
+                        break;
+                }
+
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return ret;
+    }
+
+    public static boolean find(Connection conn, String find){
+        try (Statement stmt = conn.createStatement();){
+            ResultSet rset = stmt.executeQuery(find);
+            if (rset != null)
+                return true;
+            else
+                return false;
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
+    public static void update(Connection conn, String update, String updateWith, type type, String email) {
+            try(Statement stmt = conn.createStatement();) {
+                String typeof = "";
+                switch (type){
+                    case CUSTOMER:
+                        typeof = "customers";
+                        break;
+
+                    case DEALER:
+                        break;
+
+                    case CAR:
+                        break;
+                }
+
+                String strUpdate = "update " + typeof + " set " + update + " = " + updateWith + " where email = " + email;
+                stmt.executeUpdate(strUpdate);
+
+            }catch(SQLException ex){
+                ex.printStackTrace();
+            }
+    }
+
+    public static void insert(Connection conn, String read, type type) {
+        try (Statement stmt = conn.createStatement();) {
+            String typeof = "";
+            switch (type){
+                case CUSTOMER:
+                    typeof = "customers";
+                    break;
+
+                case DEALER:
+                    break;
+
+                case CAR:
+                    break;
+
+            }
+            /*
+            // INSERT a partial record
+            sqlInsert = "insert into books (id, title, author) "
+                    + "values (3004, 'Fishing 101', 'Kumar')";
+            System.out.println("The SQL query is: " + sqlInsert);  // Echo for debugging
+            countInserted = stmt.executeUpdate(sqlInsert);
+            System.out.println(countInserted + " records inserted.\n");
+            */
+            String sqlInsert = "insert into " + typeof
+                    //Table Customers: name, address, phone, gender, income, ID, history, employee
+                    + " values " + read;
+            stmt.executeUpdate(sqlInsert);
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
+    }
+
+    public static void delete(Connection conn, type type, String email){
+        try (Statement stmt = conn.createStatement();) {
+            String typeof = "";
+            switch (type){
+                case CUSTOMER:
+                    typeof = "customers";
+                    break;
+
+                case DEALER:
+                    break;
+
+                case CAR:
+                    break;
+
+            }
+
+            // DELETE records with id>=3000 and id<4000
+            String sqlDelete = "delete from " + typeof + " where email = " + email;
+            stmt.executeUpdate(sqlDelete);
+        }catch(SQLException ex){
+            ex.printStackTrace();
+        }
+    }
+
+    public static boolean search(String[] list, String key){
+        for(int i = 0; i < list.length; i++){
+            if (list[i].equals(key))
+                    return true;
+        }
+        return false;
+    }
+}
