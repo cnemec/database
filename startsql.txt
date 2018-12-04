@@ -110,3 +110,10 @@ update dealer
 set current = current-1
 where dealer.dname = sell.dname;
 end;
+
+create role manufacturing;
+grant insert on Vehicle to manufacturing;
+grant select on Vehicle to manufacturing;
+create role salesassociates;
+grant update on Vehicle to salesassociates;
+grant select on Vehicle to salesassociates;
