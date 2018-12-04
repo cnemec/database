@@ -117,3 +117,4 @@ grant select on Vehicle to manufacturing;
 create role salesassociates;
 grant update on Vehicle to salesassociates;
 grant select on Vehicle to salesassociates;
+grant insert on dealers to salesassociates;
