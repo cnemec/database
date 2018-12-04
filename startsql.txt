@@ -101,13 +101,13 @@ where numVehicles > 1
 group by cname, address
 
 CREATE TRIGGER dealerssold 
-AFTER INSERT OR UPDATE OF sold ON Vehicle
+AFTER UPDATE OF sold ON Vehicle
 REFERENCING OLD AS selled NEW AS sell
 for each row
-when(sell.sold = '1' and selled.sold = '0')
+when(sell.sold = 1 and selled.sold = 0)
 begin atomic
 update dealer
-set current = current-1
+set current = current-1;
 where dealer.dname = sell.dname;
 end;
 
@@ -118,3 +118,14 @@ create role salesassociates;
 grant update on Vehicle to salesassociates;
 grant select on Vehicle to salesassociates;
 grant insert on dealers to salesassociates;
+
+CREATE TRIGGER dealernewcar
+AFTER INSERT ON Vehicle
+REFERENCING NEW AS stock
+for each row
+when(stock.sold = 0)
+begin atomic
+update dealer
+set current = current+1;
+where dealer.dname = sell.dname;
+end;
