@@ -99,3 +99,14 @@ SELECT cname, address, count(VID) as numVehicles
 from Vehicle
 where numVehicles > 1
 group by cname, address
+
+CREATE TRIGGER dealerssold 
+AFTER INSERT OR UPDATE OF sold ON Vehicle
+REFERENCING OLD AS selled NEW AS sell
+for each row
+when(sell.sold = '1' and selled.sold = '0')
+begin atomic
+update dealer
+set current = current-1
+where dealer.dname = sell.dname;
+end;
