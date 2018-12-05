@@ -37,6 +37,7 @@ bodytype varchar(20),
 sold integer,
 cost integer,
 dname varchar(20),
+daddress varchar(20),
 DateOfSale Date,
 cname VARCHAR(20),
 address VARCHAR(20),
@@ -46,27 +47,31 @@ FOREIGN KEY(bodytype) References Model(bodytype),
 FOREIGN KEY(color) References Options(color),
 FOREIGN KEY(transmission) References Options(transmission),
 FOREIGN KEY(engine) References Options(engine),
-FOREIGN KEY(dname) References Dealers(dname)
+FOREIGN KEY(dname) References Dealers(dname),
+FOREIGN KEY(daddress) References Dealers(daddress),
 FOREIGN KEY(cname) References Customers(cname),
 FOREIGN KEY(address) References Customers(address),
 );
 CREATE TABLE Dealers(
 dname varchar(20),
+daddress varchar(20),
 maxunits integer,
 current integer,
-PRIMARY KEY(dname),
+PRIMARY KEY(dname, daddress),
 CONSTRAINT CHK_numbers CHECK (maxunits>=current)
 );
 CREATE TABLE Customers(
 income integer,
 dname varchar(20),
+daddress varchar(20),
 cname varchar(20) NOT NULL,
 address varchar(20),
 phonenumber character(11),
 gender character(1),
 PRIMARY KEY(cname, address),
 CONSTRAINT CHK_Gender CHECK (gender ='f' OR gender = 'm'),
-FOREIGN KEY(dname references Dealers(dname)
+FOREIGN KEY(dname references Dealers(dname),
+FOREIGN KEY(daddress) References Dealers(daddress)
 );
 
 CREATE VIEW carsBought AS
