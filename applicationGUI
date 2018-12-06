@@ -1,0 +1,265 @@
+import java.awt.EventQueue;
+import java.sql.*;
+
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.BorderLayout;
+import java.awt.Font;
+import javax.swing.JTextField;
+import javax.swing.JPasswordField;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Color;
+import javax.swing.JPanel;
+
+public class Automobileapp {
+
+	private JFrame frame;
+	private JTextField username;
+	private JPasswordField password;
+	private JTextField txtLoginSystem;
+	private JTextField txtAlreadyUser;
+	private JTextField txtNewUser;
+	private JTextField name_field;
+	private JTextField Email_field;
+	private JTextField Mobile_field;
+	private JPanel panel;
+	private JButton create_account;
+	private JPasswordField password_field;
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Automobileapp window = new Automobileapp();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public Automobileapp() {
+		initialize();
+	}
+
+	
+	Connection connection = null;
+	
+	public void CreateTableNew() {
+		
+		try {
+			
+			DatabaseMetaData dmd = connection.getMetaData();
+			ResultSet Set = dmd.getTables(null, null, "Customers", null);
+			
+			if(Set.next()) {
+				
+			}else {
+				String create_table = "create table Customers(" 
+						+ "dname varchar(20)," 
+						+ "income integer,"
+						+ "dadress varchar(20),"
+						+ "cname varchar(20),"
+						+ "address varchar(20),"
+						+ "phonenumber char(11),"
+						+"gender char(1))";
+				
+				PreparedStatement statement = connection.prepareStatement(create_table);
+				statement.executeUpdate();
+				
+				JOptionPane.showMessageDialog(null, "Table created successfully");
+			}
+		}catch(Exception e) {
+			
+		}
+	}
+
+	private void initialize() {
+		
+		try {
+			 Class.forName("oracle.jdbc.driver.OracleDriver");
+	         Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@fourier.cs.iit.edu:1521:orcl", "slim21", "YCsBUo3...uK3Z2o1817");
+	         JOptionPane.showMessageDialog(null,"connection successful");
+			
+		}catch(ClassNotFoundException | SQLException e1) {
+			
+			e1.printStackTrace();
+			
+		}
+
+		frame = new JFrame();
+		frame.setBounds(100, 100, 861, 626);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
+		
+		JLabel lblUsername = new JLabel("Username");
+		lblUsername.setFont(new Font("Arial", Font.PLAIN, 17));
+		lblUsername.setBounds(406, 213, 101, 18);
+		frame.getContentPane().add(lblUsername);
+		
+		JLabel lblPassword = new JLabel("Password");
+		lblPassword.setFont(new Font("Arial", Font.PLAIN, 17));
+		lblPassword.setBounds(406, 318, 91, 29);
+		frame.getContentPane().add(lblPassword);
+		
+		username = new JTextField();
+		username.setBounds(511, 205, 285, 29);
+		frame.getContentPane().add(username);
+		username.setColumns(10);
+		
+		password = new JPasswordField();
+		password.setBounds(511, 316, 285, 27);
+		frame.getContentPane().add(password);
+		
+		JButton btnLogin = new JButton("Login");
+		btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String uname = username.getText();
+				String passwd = password.getText();
+				
+				if(uname.equals("Chris")&& passwd.equals("password"))
+				{
+					JOptionPane.showMessageDialog(frame,"you are successfully logined");
+				}
+				else {
+					JOptionPane.showMessageDialog(frame,"Invalid username or password");
+				}
+				
+			}
+		});
+		btnLogin.setBounds(456, 382, 153, 37);
+		frame.getContentPane().add(btnLogin);
+		
+		JButton btnReset = new JButton("Modify");
+		btnReset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				username.setText(null);
+				password.setText(null);
+			}
+		});
+		btnReset.setBounds(671, 382, 153, 37);
+		frame.getContentPane().add(btnReset);
+		
+		txtLoginSystem = new JTextField();
+		txtLoginSystem.setBackground(new Color(240, 240, 240));
+		txtLoginSystem.setText("Login System");
+		txtLoginSystem.setBounds(340, 11, 203, 35);
+		frame.getContentPane().add(txtLoginSystem);
+		txtLoginSystem.setColumns(10);
+		
+		txtAlreadyUser = new JTextField();
+		txtAlreadyUser.setBackground(new Color(204, 204, 204));
+		txtAlreadyUser.setText("Already User");
+		txtAlreadyUser.setBounds(479, 118, 186, 35);
+		frame.getContentPane().add(txtAlreadyUser);
+		txtAlreadyUser.setColumns(10);
+		
+		JButton btnCreateAccount = new JButton("Create Account");
+		btnCreateAccount.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panel.setVisible(true);
+			}
+		});
+		btnCreateAccount.setBounds(44, 160, 256, 52);
+		frame.getContentPane().add(btnCreateAccount);
+		
+		txtNewUser = new JTextField();
+		txtNewUser.setBackground(new Color(153, 153, 153));
+		txtNewUser.setText("New User");
+		txtNewUser.setBounds(81, 104, 186, 35);
+		frame.getContentPane().add(txtNewUser);
+		txtNewUser.setColumns(10);
+		
+		panel = new JPanel();
+	
+		panel.setVisible(false);
+		panel.setBounds(22, 233, 380, 301);
+		frame.getContentPane().add(panel);
+		panel.setLayout(null);
+		
+		name_field = new JTextField();
+		name_field.setBounds(102, 21, 207, 35);
+		panel.add(name_field);
+		name_field.setColumns(10);
+		
+		JLabel lblName = new JLabel("Name");
+		lblName.setFont(new Font("굴림", Font.PLAIN, 17));
+		lblName.setBounds(22, 27, 99, 29);
+		panel.add(lblName);
+		
+		Email_field = new JTextField();
+		Email_field.setBounds(102, 84, 207, 35);
+		panel.add(Email_field);
+		Email_field.setColumns(10);
+		
+		JLabel lblEmail = new JLabel("Email");
+		lblEmail.setFont(new Font("굴림", Font.PLAIN, 17));
+		lblEmail.setBounds(22, 90, 99, 29);
+		panel.add(lblEmail);
+		
+		JLabel lblCreatepassword = new JLabel("CreatePassword");
+		lblCreatepassword.setFont(new Font("굴림", Font.PLAIN, 10));
+		lblCreatepassword.setBounds(10, 149, 99, 29);
+		panel.add(lblCreatepassword);
+		
+		JLabel lblAddress = new JLabel("Mobile");
+		lblAddress.setFont(new Font("굴림", Font.PLAIN, 17));
+		lblAddress.setBounds(22, 199, 99, 29);
+		panel.add(lblAddress);
+		
+		Mobile_field = new JTextField();
+		Mobile_field.setBounds(102, 193, 207, 35);
+		panel.add(Mobile_field);
+		Mobile_field.setColumns(10);
+		
+		create_account = new JButton("Create Account");
+		create_account.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			
+				try {
+					
+					String insert_data = "insert into Customers values(?,?,?,?,?,?,?)";
+					PreparedStatement statement = connection.prepareStatement(insert_data);
+					statement.setString(4, name_field.getText());
+					statement.setString(5, Email_field.getText());
+					statement.setString(6, Mobile_field.getText());
+					statement.setString(3, password_field.getText());
+					
+					int data_entered = statement.executeUpdate();
+					
+					if (data_entered>0) {
+						JOptionPane.showMessageDialog(null,"Data inseted successfully");
+						
+					}
+					else {
+						JOptionPane.showMessageDialog(null,"Unable to insert data");
+					}
+				}catch(SQLException e1) {
+					e1.printStackTrace();
+					
+				}
+			
+			}
+		});
+		create_account.setBounds(22, 249, 296, 37);
+		panel.add(create_account);
+		
+		password_field = new JPasswordField();
+		password_field.setBounds(102, 141, 207, 35);
+		panel.add(password_field);
+		
+		CreateTableNew();
+	}
+}
